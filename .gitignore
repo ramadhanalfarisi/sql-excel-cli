@@ -1,2 +1,3 @@
 sql/*.sql
 dest/*.xlsx
+.env
