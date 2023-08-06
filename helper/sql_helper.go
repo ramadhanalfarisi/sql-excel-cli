@@ -152,8 +152,8 @@ func readFileByLine(path string) (ls []string, err error) {
 func isComment(line string) bool {
 	d := "/*"
 	c := "--"
-	if len(line) > 0 {
-		return line[:1] == d || line[:1] == c
+	if len(line) > 1 {
+		return line[:2] == d || line[:2] == c
 	} else {
 		return false
 	}

@@ -2,12 +2,10 @@ package cmd
 
 import (
 	"github.com/ramadhanalfarisi/sql-excel-cli/controller"
-	"github.com/ramadhanalfarisi/sql-excel-cli/model"
 	"github.com/spf13/cobra"
 )
 
-var excelModel = model.DataModel{DB: Dbroot}
-var excelController = controller.NewExcelController(excelModel)
+var excelController = controller.NewExcelController()
 var excelCommand = &cobra.Command{
 	Use:   "excel",
 	Short: "This command used to convert sql file to excel file",

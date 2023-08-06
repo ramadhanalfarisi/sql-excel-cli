@@ -5,25 +5,25 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ramadhanalfarisi/sql-excel-cli/db"
 	"github.com/ramadhanalfarisi/sql-excel-cli/helper"
 	"github.com/ramadhanalfarisi/sql-excel-cli/model"
 	"github.com/spf13/cobra"
 )
 
-type InfoController struct {
-	Model model.InfoModel
-}
+type InfoController struct {}
 
-func NewInfoController(model model.InfoModel) InfoControllerInterface {
-	return &InfoController{Model: model}
+func NewInfoController() InfoControllerInterface {
+	return &InfoController{}
 }
 
 func (c *InfoController) GetTableInfo(file string, dir string) ([]model.InfoTable, error) {
+	infoModel := model.InfoModel{DB: db.ConnectDB()}
 	info, err := c.CreateTable(file, dir)
 	if err != nil {
 		return nil, err
 	}
-	tables, err := c.Model.GetColumn(info.Tables)
+	tables, err := infoModel.GetColumn(info.Tables)
 	if err != nil {
 		return nil, err
 	}
@@ -35,6 +35,7 @@ func (c *InfoController) GetTableInfo(file string, dir string) ([]model.InfoTabl
 }
 
 func (c *InfoController) CreateTable(file string, dir string) (*helper.SqlFile, error) {
+	connectDB := db.ConnectDB()
 	sqlHelper := helper.SqlNew()
 	if len(file) > 0 && len(dir) > 0 {
 		return nil, fmt.Errorf("Just fill one (file or dir)")
@@ -54,11 +55,11 @@ func (c *InfoController) CreateTable(file string, dir string) (*helper.SqlFile, 
 		}
 	}
 	
-	err2 := sqlHelper.DropTables(c.Model.DB)
+	err2 := sqlHelper.DropTables(connectDB)
 	if err2 != nil {
 		return nil, err2
 	}
-	_, err3 := sqlHelper.Exec(c.Model.DB)
+	_, err3 := sqlHelper.Exec(connectDB)
 	if err3 != nil {
 		return nil, err3
 	}

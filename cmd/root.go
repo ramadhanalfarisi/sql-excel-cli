@@ -7,11 +7,9 @@ package cmd
 import (
 	"os"
 
-	"github.com/ramadhanalfarisi/sql-excel-cli/db"
 	"github.com/spf13/cobra"
 )
 
-var Dbroot = db.ConnectDB()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -32,8 +30,15 @@ func Execute() {
 	excelCommand.Flags().String("file", "", "Add SQL file")
 	excelCommand.Flags().String("dir", "", "Add SQL directory")
 	excelCommand.Flags().String("dest", "", "Destination excel file")
+
+	envCmd.Flags().String("host","","Database host")
+	envCmd.Flags().String("username","","Database username")
+	envCmd.Flags().String("password","","Database password")
+	envCmd.Flags().String("port","","Database port")
+	envCmd.Flags().String("dbname","","Database name")
 	rootCmd.AddCommand(infoCommand)
 	rootCmd.AddCommand(excelCommand)
+	rootCmd.AddCommand(envCmd)
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

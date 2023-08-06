@@ -7,25 +7,25 @@ import (
 	"strconv"
 	"unicode/utf8"
 
+	"github.com/ramadhanalfarisi/sql-excel-cli/db"
 	"github.com/ramadhanalfarisi/sql-excel-cli/helper"
 	"github.com/ramadhanalfarisi/sql-excel-cli/model"
 	"github.com/spf13/cobra"
 	"github.com/xuri/excelize/v2"
 )
 
-type ExcelController struct {
-	Model model.DataModel
-}
+type ExcelController struct {}
 
-func NewExcelController(model model.DataModel) ExcelControllerInterface {
-	return &ExcelController{Model: model}
+func NewExcelController() ExcelControllerInterface {
+	return &ExcelController{}
 }
 
 // CreateTable implements ExcelControllerInterface.
 func (c *ExcelController) CreateTable(file string, dir string) (*helper.SqlFile, error) {
+	connDB := db.ConnectDB()
 	sqlHelper := helper.SqlNew()
 	if len(file) > 0 && len(dir) > 0 {
-		return nil, fmt.Errorf("Just fill one (file or dir)")
+		return nil, fmt.Errorf("just fill one (file or dir)")
 	}else{
 		if len(file) > 0 {
 			err := sqlHelper.Filex(file)
@@ -41,12 +41,12 @@ func (c *ExcelController) CreateTable(file string, dir string) (*helper.SqlFile,
 			return nil, fmt.Errorf("file or dir flag have to filled")
 		}
 	}
-	err2 := sqlHelper.DropTables(c.Model.DB)
+	err2 := sqlHelper.DropTables(connDB)
 	if err2 != nil {
 		return nil, err2
 	}
 
-	_, err3 := sqlHelper.Exec(c.Model.DB)
+	_, err3 := sqlHelper.Exec(connDB)
 	if err3 != nil {
 		return nil, err3
 	}
@@ -56,10 +56,11 @@ func (c *ExcelController) CreateTable(file string, dir string) (*helper.SqlFile,
 // GetData implements ExcelControllerInterface.
 func (c *ExcelController) GetData(file string, dir string) ([]model.DataTable, error) {
 	sqlFile, err := c.CreateTable(file, dir)
+	dataModel := model.DataModel{DB: db.ConnectDB()}
 	if err != nil {
 		return nil, err
 	}
-	chanData, err := c.Model.GetData(sqlFile.Tables)
+	chanData, err := dataModel.GetData(sqlFile.Tables)
 	if err != nil {
 		return nil, err
 	}
