@@ -14,7 +14,7 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-type ExcelController struct {}
+type ExcelController struct{}
 
 func NewExcelController() ExcelControllerInterface {
 	return &ExcelController{}
@@ -26,7 +26,7 @@ func (c *ExcelController) CreateTable(file string, dir string) (*helper.SqlFile,
 	sqlHelper := helper.SqlNew()
 	if len(file) > 0 && len(dir) > 0 {
 		return nil, fmt.Errorf("just fill one (file or dir)")
-	}else{
+	} else {
 		if len(file) > 0 {
 			err := sqlHelper.Filex(file)
 			if err != nil {
@@ -147,8 +147,9 @@ func (c *ExcelController) ExcelGenerator(tables []model.DataTable, dest string) 
 				}
 				f.SetCellValue(table.Name, char+num, item[col.Name].([]byte)[:])
 			}
+			helper.PrintProgressBar(iitem+1, len(table.Data), "Progress "+table.Name, "Complete", 25, "=")
 		}
-		for icol, col:= range table.Columns {
+		for icol, col := range table.Columns {
 			var char string
 			if icol <= 25 {
 				char = string(chars[icol])
